@@ -20,10 +20,16 @@
         <h2>Gestión de Empleados</h2>
 
         <div class="actions">
-            <input type="search" class="search-input" placeholder="Buscar por ID, nombre...">
+            <form method="GET" action="index.php" class="form-search">
+                <input type="hidden" name="route" value="employees">
+                <input type="search" name="search" class="search-input"
+                    placeholder="Buscar por ID, nombre, usuario o correo..."
+                    value="<?= isset($_GET['search']) ? $_GET['search'] : '' ?>">
+                <button type="submit" class="search-button">Buscar</button>
+            </form>
             <div>
                 <a href="index.php?route=employees/create" class="create-button">Agregar Nuevo Empleado</a>
-                <span>Filtrar</span>
+                <a href="index.php?route=employees/export" class="edit-button">Exportar</a>
             </div>
         </div>
 

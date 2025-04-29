@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const url = this.getAttribute("data-url");
 
             Swal.fire({
-                title: "¿Estás seguro segurisimo? 🥹🥹",
+                title: "¿Estás seguro?",
                 text: "No podrás revertir esta acción.",
                 showCancelButton: true,
                 confirmButtonColor: "#D81B60",

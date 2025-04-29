@@ -54,7 +54,7 @@
                                             value="<?= $saleType['descripcion'] ?>">
                                     </form>
                                 </td>
-                                <td class="actions">
+                                <td>
                                     <a onclick="editSaleType(<?= $saleType['id_tipo_venta'] ?>)"
                                         id="sale_type_edit_button_<?= $saleType['id_tipo_venta'] ?>"
                                         class="edit-button">Editar</a>

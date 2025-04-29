@@ -54,7 +54,7 @@
                                             value="<?= $category['nombre_categoria'] ?>">
                                     </form>
                                 </td>
-                                <td class="actions">
+                                <td>
                                     <a onclick="editCategory(<?= $category['id_categoria'] ?>)"
                                         id="category_edit_button_<?= $category['id_categoria'] ?>"
                                         class="edit-button">Editar</a>
@@ -99,7 +99,7 @@
                                             id="input_estado_<?= $state['id_estado'] ?>" value="<?= $state['nombre_estado'] ?>">
                                     </form>
                                 </td>
-                                <td class="actions">
+                                <td>
                                     <a onclick="editState(<?= $state['id_estado'] ?>)"
                                         id="state_edit_button_<?= $state['id_estado'] ?>" class="edit-button">Editar</a>
                                     <a onclick="saveState(<?= $state['id_estado'] ?>)"

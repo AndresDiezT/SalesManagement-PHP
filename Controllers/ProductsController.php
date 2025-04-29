@@ -21,7 +21,13 @@ class ProductsController
 
     public function index()
     {
-        $products = $this->product->getAllProducts();
+        $search = isset($_GET['search']) ? trim($_GET['search']) : null;
+
+        if ($search) {
+            $products = $this->product->searchProducts($search);
+        } else {
+            $products = $this->product->getAllProducts();
+        }
 
         include __DIR__ . '/../Views/Products/index.php';
     }
@@ -34,8 +40,7 @@ class ProductsController
 
         $product = $this->product->getOneProduct($cod_prod);
 
-        if (empty($product))
-        {
+        if (empty($product)) {
             $_SESSION["error_message"] = "Producto no encontrado";
             header("Location: index.php?route=products");
             exit;
@@ -65,8 +70,8 @@ class ProductsController
             ];
 
             $rules = [
-                "codigo" => ["required", "min:7", "max:7", "unique:productos, cod_prod"],
-                "nombre" => ["required", "min:6", "unique:productos, nombre_prod"],
+                "codigo" => ["required", "min:7", "max:7"],
+                "nombre" => ["required", "min:6"],
                 "descripcion" => ["required", "min:12", "max:300"],
                 "stock" => ["required", "numeric"],
                 "precio" => ["required", "numeric"],
@@ -129,7 +134,7 @@ class ProductsController
             ];
 
             $rules = [
-                "nombre" => ["required", "min:6", "unique:productos, nombre_prod, cod_prod, $cod_prod"],
+                "nombre" => ["required", "min:6"],
                 "descripcion" => ["required", "min:12", "max:300"],
                 "stock" => ["required", "numeric"],
                 "precio" => ["required", "numeric"],
@@ -188,6 +193,44 @@ class ProductsController
 
         header("Location: index.php?route=products");
         exit;
+    }
+
+    public function exportProducts()
+    {
+        $productos = $this->product->getAllProducts();
+
+        header("Content-Type: text/csv; charset=ISO-8859-1");
+        header("Content-Disposition: attachment; filename=productos.csv");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        $output = fopen("php://output", "w");
+
+        fputcsv($output, [
+            "Codigo",
+            "Nombre",
+            "Descripcion",
+            "Stock",
+            "Impuesto",
+            "Valor por Unidad",
+            "Categoria",
+            "Estado"
+        ], ';');
+
+        foreach ($productos as $prod) {
+            fputcsv($output, [
+                mb_convert_encoding($prod['cod_prod'], 'ISO-8859-1', 'UTF-8'),
+                mb_convert_encoding($prod['nombre_prod'], 'ISO-8859-1', 'UTF-8'),
+                mb_convert_encoding($prod['descripcion_prod'], 'ISO-8859-1', 'UTF-8'),
+                $prod['stock_prod'],
+                $prod['impuesto'] . '%',
+                '$ ' . $prod['valor_unidad'],
+                mb_convert_encoding($prod['nombre_categoria'], 'ISO-8859-1', 'UTF-8'),
+                mb_convert_encoding($prod['nombre_estado'], 'ISO-8859-1', 'UTF-8')
+            ], ';');
+        }
+
+        fclose($output);
     }
 }
 ?>

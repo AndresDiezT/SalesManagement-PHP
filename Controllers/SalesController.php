@@ -6,6 +6,11 @@ require_once __DIR__ . "/../Models/Employee.php";
 require_once __DIR__ . "/../Models/Product.php";
 require_once __DIR__ . "/../Models/InvoiceDetail.php";
 
+require_once __DIR__ . '/../dompdf/autoload.inc.php';
+
+use Dompdf\Dompdf;
+use Dompdf\Options;
+
 class SalesController
 {
     private $saleEmployee;
@@ -30,7 +35,13 @@ class SalesController
 
     public function index()
     {
-        $sales = $this->saleEmployee->getAllSales();
+        $search = isset($_GET['search']) ? trim($_GET['search']) : null;
+
+        if ($search) {
+            $sales = $this->saleEmployee->searchSales($search);
+        } else {
+            $sales = $this->saleEmployee->getAllSales();
+        }
 
         include __DIR__ . '/../Views/Sales/index.php';
     }
@@ -42,7 +53,7 @@ class SalesController
         }
 
         $saleDetails = $this->saleEmployee->getOneSale($nro_invoice);
-        
+
         if (empty($saleDetails)) {
             $_SESSION["error_message"] = "Venta no encontrada";
             header("Location: index.php?route=sales");
@@ -260,5 +271,156 @@ class SalesController
 
         return $invoiceNumber;
     }
+
+    public function exportSales()
+    {
+        $ventas = $this->saleEmployee->getAllSales();
+
+        header("Content-Type: text/csv; charset=ISO-8859-1");
+        header("Content-Disposition: attachment; filename=ventas.csv");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        $output = fopen("php://output", "w");
+
+        fputcsv($output, [
+            "Nro Factura",
+            "Fecha Venta",
+            "Cliente",
+            "Empleado",
+            "Tipo de Venta",
+            "ID Producto",
+            "Nombre Producto",
+            "Cantidad",
+            "Impuesto",
+            "Valor Producto",
+            "Valor Impuesto",
+            "Valor Total"
+        ], ';');
+
+        foreach ($ventas as $venta) {
+            $detalles = $this->saleEmployee->getOneSale($venta['nro_factura']);
+
+            foreach ($detalles as $detalle) {
+                $cod_prod = isset($detalle['cod_prod']) ? $detalle['cod_prod'] : 'N/A';
+                $nombre_prod = isset($detalle['nombre_prod']) ? $detalle['nombre_prod'] : 'N/A';
+                $cantidad = isset($detalle['cantidad']) ? $detalle['cantidad'] : '0';
+                $impuesto = isset($detalle['impuesto']) ? $detalle['impuesto'] : '0';
+                $valor_prod = isset($detalle['valor_prod']) ? $detalle['valor_prod'] : '0';
+                $valor_impuesto = isset($detalle['valor_impuesto']) ? $detalle['valor_impuesto'] : '0';
+                $valor_total = isset($detalle['valor_total']) ? $detalle['valor_total'] : '0';
+
+                fputcsv($output, [
+                    mb_convert_encoding($venta['nro_factura'], 'ISO-8859-1', 'UTF-8'),
+                    mb_convert_encoding($venta['fecha_venta'], 'ISO-8859-1', 'UTF-8'),
+                    mb_convert_encoding($venta['nombre_cliente'], 'ISO-8859-1', 'UTF-8'),
+                    mb_convert_encoding($venta['nombre_empleado'], 'ISO-8859-1', 'UTF-8'),
+                    mb_convert_encoding($venta['descripcion'], 'ISO-8859-1', 'UTF-8'),
+                    mb_convert_encoding($cod_prod, 'ISO-8859-1', 'UTF-8'),
+                    mb_convert_encoding($nombre_prod, 'ISO-8859-1', 'UTF-8'),
+                    mb_convert_encoding($cantidad, 'ISO-8859-1', 'UTF-8'),
+                    mb_convert_encoding($impuesto, 'ISO-8859-1', 'UTF-8'),
+                    mb_convert_encoding($valor_prod, 'ISO-8859-1', 'UTF-8'),
+                    mb_convert_encoding($valor_impuesto, 'ISO-8859-1', 'UTF-8'),
+                    mb_convert_encoding($valor_total, 'ISO-8859-1', 'UTF-8')
+                ], ';');
+            }
+        }
+
+        fclose($output);
+    }
+
+    public function generatePdf($nro_invoice)
+    {
+        $saleDetails = $this->saleEmployee->getOneSale($nro_invoice);
+        if (empty($saleDetails)) {
+            echo "No se encontró la venta.";
+            return;
+        }
+
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isPhpEnabled', true);
+        $dompdf = new Dompdf($options);
+
+        $cssFile = __DIR__ . '/../Css/facturaPDF.css';
+        $css = file_get_contents($cssFile);
+
+        $html = "<html>
+                <head>
+                    <style>
+                        $css
+                    </style>
+                </head>
+                <body>
+                    <div class='container'>
+                        <div class='header'>
+                            <h1>Factura No. {$nro_invoice}</h1>
+                            <p>Fecha: {$saleDetails[0]['fecha_venta']}</p>
+                            <p><strong>Cliente:</strong> {$saleDetails[0]['nombre_cliente']}</p>
+                            <p><strong>Empleado:</strong> {$saleDetails[0]['nombre_empleado']}</p>
+                            <p><strong>Tipo de Venta:</strong> {$saleDetails[0]['tipo_venta']}</p>
+                        </div>
+
+                        <div class='invoice-info'>
+                            <p><strong>Datos de la Venta:</strong></p>
+                            <p><strong>Factura:</strong> {$nro_invoice}</p>
+                            <p><strong>Fecha de Venta:</strong> {$saleDetails[0]['fecha_venta']}</p>
+                        </div>
+
+                        <div class='table-container'>
+                            <h3>Productos Comprados</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Valor Unitario</th>
+                                        <th>Valor Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>";
+
+        foreach ($saleDetails as $detail) {
+            $html .= "<tr>
+                    <td>{$detail['nombre_prod']}</td>
+                    <td>{$detail['cantidad']}</td>
+                    <td>$ {$detail['valor_prod']}</td>
+                    <td>$ {$detail['valor_total']}</td>
+                  </tr>";
+        }
+
+        $html .= "</tbody>
+                </table>
+              </div>";
+
+        $totalAmount = array_sum(array_column($saleDetails, 'valor_total'));
+        $html .= "<div class='total'>
+                <p>Total Factura: $ " . number_format($totalAmount, 0, ',', '.') . " COP</p>
+              </div>";
+
+        $html .= "<div class='footer'>
+                <p>Gracias por tu compra</p>
+                <p>Este documento es válido como recibo de venta</p>
+                <p>TIENDA DE TODOS S.A.S</p>
+              </div>";
+
+        $html .= "</div>
+            </body>
+          </html>";
+
+        $dompdf->loadHtml($html);
+
+        $dompdf->setPaper('A4', 'portrait');
+
+        $dompdf->render();
+
+        $dompdf->stream("factura_{$nro_invoice}.pdf", array("Attachment" => 0));
+    }
+
+    public function sendInvoiceByEmail($nro_invoice)
+    {
+    }
+
 }
 ?>

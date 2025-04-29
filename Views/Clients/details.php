@@ -22,6 +22,7 @@
             <p><strong>ID:</strong> <?= $client["id_cliente"] ?></p>
             <p><strong>Nombre Cliente:</strong> <?= $client["nombre_cliente"] ?></p>
             <p><strong>Numero Identidad:</strong> <?= $client["nro_identidad"] ?></p>
+            <p><strong>Correo:</strong> <?= $client["correo_cliente"] ?></p>
             <p><strong>Dirección:</strong> <?= $client["direccion_cliente"] ?></p>
             <div class="details-buttons">
                 <a href="index.php?route=clients/edit&id_client=<?= $client['id_cliente'] ?>"

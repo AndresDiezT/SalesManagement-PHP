@@ -19,10 +19,16 @@
         </nav>
         <h2>Gestión de Clientes</h2>
         <div class="actions">
-            <input type="search" class="search-input" placeholder="Buscar por ID, nombre y nro identidad...">
+            <form method="GET" action="index.php" class="form-search">
+                <input type="hidden" name="route" value="clients">
+                <input type="search" name="search" class="search-input"
+                    placeholder="Buscar por ID, nombre o numero identidad..."
+                    value="<?= isset($_GET['search']) ? $_GET['search'] : '' ?>">
+                <button type="submit" class="search-button">Buscar</button>
+            </form>
             <div>
                 <a href="index.php?route=clients/create" class="create-button">Agregar Nuevo Cliente</a>
-                <a href="#" class="config-button">Filtros</a>
+                <a href="index.php?route=clients/export" class="edit-button">Exportar</a>
             </div>
         </div>
         <table class="list">
@@ -31,6 +37,7 @@
                     <th>ID</th>
                     <th>Nombre</th>
                     <th>Numero Identidad</th>
+                    <th>Correo</th>
                     <th>Direccion</th>
                     <th>Acciones</th>
                 </tr>
@@ -42,6 +49,7 @@
                             <td><?= $client["id_cliente"] ?></td>
                             <td><?= $client["nombre_cliente"] ?></td>
                             <td><?= $client["nro_identidad"] ?></td>
+                            <td><?= $client["correo_cliente"] ?></td>
                             <td><?= $client["direccion_cliente"] ?></td>
                             <td class="table-actions">
                                 <a href="index.php?route=clients/details&id_client=<?= $client["id_cliente"] ?>"
