@@ -37,45 +37,9 @@ class ValidationHelper
                         $errors[$field] = "Las contraseñas no coinciden";
                     }
                 }
-                if (strpos($rule, "unique:") === 0 && $database) {
-                    $cleanRule = str_replace("unique:", "", $rule);
-                    list($table, $column, $idColumn, $excludeId) = array_pad(explode(",", $cleanRule), 4, null);
-
-                    $table = trim($table);
-                    $column = trim($column);
-                    $idColumn = trim($idColumn);
-                    $excludeId = $excludeId !== null ? trim($excludeId) : null;
-
-                    if (self::existsInDatabase($database, $table, $column, $data[$field], $idColumn, $excludeId)) {
-                        $errors[$field] = "El $column ya está en uso";
-                    }
-                }
             }
         }
 
         return $errors;
-    }
-
-    private static function existsInDatabase($database, $table, $column, $value, $idColumn = "", $excludeId = null)
-    {
-        if (empty($table) || empty($column)) {
-            return false;
-        }
-
-        $query = "SELECT COUNT(*) FROM $table WHERE $column = :value";
-
-        if (!empty($idColumn) && $excludeId !== null) {
-            $query .= " AND `$idColumn` != :excludeId";
-        }
-
-        $statement = $database->prepare($query);
-        $statement->bindParam(':value', $value);
-
-        if (!empty($idColumn) && $excludeId !== null) {
-            $statement->bindParam(':excludeId', $excludeId);
-        }
-
-        $statement->execute();
-        return $statement->fetchColumn() > 0;
     }
 }

@@ -6,7 +6,6 @@ $old = $_SESSION["old_data"] ?? [];
 unset($_SESSION["errors"], $_SESSION["old_data"]);
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -146,7 +145,7 @@ unset($_SESSION["errors"], $_SESSION["old_data"]);
                     <input type="hidden" name="taxes[]" value="${taxValue}">
                     <input type="hidden" name="totals[]" value="${totalValue}">
                 </td>
-                <td><input type="number" class="input-settings quantity" name="quantities[]" value="1" min="1" step="0.01" required></td>
+                <td><input type="number" class="input-settings quantity" name="quantities[]" value="1" min="1" step="1" required></td>
                 <td>$${productPrice.toFixed(2)}</td>
                 <td>$<span class="tax">${taxValue}</span></td>
                 <td>$<span class="total">${totalValue}</span></td>

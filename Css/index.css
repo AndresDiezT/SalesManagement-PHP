@@ -97,7 +97,7 @@ body {
     transition: margin-left 0.3s;
 }
 
-.sidebar.expanded ~ .main-content {
+.sidebar.expanded~.main-content {
     margin-left: 250px;
     width: calc(100% - 250px);
 }
@@ -146,7 +146,7 @@ header {
 
 .resume {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 10px;
 }
 
@@ -165,4 +165,21 @@ header {
 .reports {
     margin-top: 25px;
 }
- 
+
+.latest table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.latest th,
+.latest td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
+.latest th {
+    background-color: #3498db;
+    color: white;
+}

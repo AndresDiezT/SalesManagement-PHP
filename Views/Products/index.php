@@ -19,9 +19,16 @@
         </nav>
         <h2>Gestión de Productos</h2>
         <div class="actions">
-            <input type="search" id="search-input" class="search-input" placeholder="Buscar por codigo, nombre...">
+            <form method="GET" action="index.php" class="form-search">
+                <input type="hidden" name="route" value="products">
+                <input type="search" name="search" class="search-input"
+                    placeholder="Buscar por código o nombre..."
+                    value="<?= isset($_GET['search']) ? $_GET['search'] : '' ?>">
+                <button type="submit" class="search-button">Buscar</button>
+            </form>
             <div>
                 <a href="index.php?route=products/create" class="create-button">Agregar Nuevo Producto</a>
+                <a href="index.php?route=products/export" class="edit-button">Exportar</a>
                 <a href="index.php?route=products/settings" class="config-button">Configuración</a>
             </div>
         </div>

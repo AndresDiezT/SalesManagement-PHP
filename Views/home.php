@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sidebar Expandible</title>
+    <title>Home</title>
     <link rel="stylesheet" href="./Css/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -80,11 +80,78 @@
                         <h3>Total de Ventas</h3>
                         <p><?= $totalSales ?> registrados</p>
                     </div>
+                    <div class="sales-card">
+                        <h3>Total Generado</h3>
+                        <p>$<?= number_format($totalAmount, 0, ',', '.') ?> COP generado</p>
+                    </div>
                 </div>
                 <h3>Reportes</h3>
                 <div class="reports">
                     <canvas id="salesChart" width="400" height="200"></canvas>
                 </div>
+
+                <section class="latest">
+                    <h3>Últimas 5 Ventas</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Factura</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Empleado</th>
+                                <th>Tipo de Venta</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($latestSales)): ?>
+                                <?php foreach ($latestSales as $sale): ?>
+                                    <tr>
+                                        <td><?= $sale['nro_factura'] ?></td>
+                                        <td><?= $sale['fecha_venta'] ?></td>
+                                        <td><?= $sale['nombre_cliente'] ?></td>
+                                        <td><?= $sale['nombre_empleado'] ?></td>
+                                        <td><?= $sale['descripcion'] ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="5">No hay ventas registradas.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </section>
+                <section class="latest">
+                    <h3>Últimos 5 Clientes</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID Cliente</th>
+                                <th>Nombre</th>
+                                <th>Nro. Identidad</th>
+                                <th>Correo</th>
+                                <th>Dirección</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($latestClients)): ?>
+                                <?php foreach ($latestClients as $client): ?>
+                                    <tr>
+                                        <td><?= $client['id_cliente'] ?></td>
+                                        <td><?= $client['nombre_cliente'] ?></td>
+                                        <td><?= $client['nro_identidad'] ?></td>
+                                        <td><?= $client['correo_cliente'] ?></td>
+                                        <td><?= $client['direccion_cliente'] ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="4">No hay clientes registrados.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </section>
             </section>
         </main>
     </div>
@@ -93,7 +160,7 @@
         function toggleSidebar() {
             document.querySelector(".sidebar").classList.toggle("expanded");
         }
-        
+
         function updateTime() {
             let now = new Date();
             let formattedDate = now.toLocaleDateString('es-ES');

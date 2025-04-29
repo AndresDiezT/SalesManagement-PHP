@@ -21,11 +21,20 @@
 
             <p><strong>Numero de Factura:</strong> <?= $sale["nro_factura"] ?></p>
             <p><strong>Fecha:</strong> <?= date("d/m/Y", strtotime($sale["fecha_venta"])) ?></p>
+            <p><strong>Correo Cliente:</strong> <?= $sale["correo_cliente"] ?></p>
             <p><strong>Cliente:</strong> <?= $sale["nombre_cliente"] ?></p>
             <p><strong>Empleado:</strong> <?= $sale["nombre_empleado"] ?></p>
             <p><strong>Tipo de Venta:</strong> <?= $sale["tipo_venta"] ?></p>
 
-            <h3 class="sale-title">Productos Comprados</h3>
+            <div class="sale-details-head">
+                <h3>Productos Comprados</h3>
+                <div>
+                    <a href="index.php?route=sales/send-invoice&nro_invoice=<?= $nro_invoice ?>"
+                        class="send-invoice-button">Enviar Factura al Cliente</a>
+                    <a href="index.php?route=sales/generate-pdf&nro_invoice=<?= $nro_invoice ?>"
+                        target="_blank">Imprimir Factura</a>
+                </div>
+            </div>
             <table class="list">
                 <thead>
                     <tr>

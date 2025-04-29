@@ -41,6 +41,14 @@ unset($_SESSION["errors"]);
                 <?php endif; ?>
             </div>
             <div class="input-field">
+                <label for="correo">Correo</label>
+                <input type="text" id="correo" name="correo" value="<?= $client['correo_cliente'] ?>" min="0"
+                    required>
+                <?php if (isset($errors["correo"])): ?>
+                    <p class="error"><?= $errors["correo"] ?></p>
+                <?php endif; ?>
+            </div>
+            <div class="input-field">
                 <label for="direccion">Direccion del Cliente</label>
                 <input type="text" id="direccion" name="direccion" value="<?= $client['direccion_cliente'] ?>" min="0"
                     required>

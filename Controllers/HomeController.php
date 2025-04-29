@@ -8,12 +8,16 @@ class HomeController
     private $product;
     private $category;
     private $state;
+    private $saleEmployee;
+    private $client;
     private $conn;
 
     public function __construct()
     {
         $db = new Connection();
         $this->conn = $db->getConnection();
+        $this->saleEmployee = new SaleEmployee($this->conn);
+        $this->client = new Client($this->conn);
     }
 
     public function index()
@@ -41,6 +45,10 @@ class HomeController
         $totalEmployees = $this->conn->query("SELECT COUNT(*) AS total FROM empleados")->fetch()["total"];
         $totalClients = $this->conn->query("SELECT COUNT(*) AS total FROM clientes")->fetch()["total"];
         $totalSales = $this->conn->query("SELECT COUNT(*) AS total FROM ventas_empleado")->fetch()["total"];
+
+        $totalAmount = $this->saleEmployee->getSaleTotal();
+        $latestSales = $this->saleEmployee->getLatestSales();
+        $latestClients = $this->client->getLatestClients();
 
         include __DIR__ . '/../Views/home.php';
     }

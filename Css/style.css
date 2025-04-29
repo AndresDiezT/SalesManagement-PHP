@@ -51,6 +51,19 @@ h2 {
     margin: 0 auto;
 }
 
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-search {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+}
+
 .search-input {
     max-width: 350px;
     width: 100%;
@@ -67,6 +80,17 @@ h2 {
 .search-input::placeholder {
     color: var(--accent);
     font-style: italic;
+}
+
+.search-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
 }
 
 .create-button {
@@ -86,6 +110,7 @@ h2 {
 
 .config-button {
     color: var(--white);
+    text-decoration: none;
 }
 
 .list {
@@ -113,12 +138,6 @@ h2 {
 
 .list tr:nth-child(even) {
     background-color: var(--secondary-bg);
-}
-
-.actions {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
 }
 
 .view-button,
@@ -253,6 +272,7 @@ form {
     display: flex;
     gap: 5px;
 }
+
 .remember-field input {
     width: 20px;
 }
@@ -333,6 +353,43 @@ form {
     display: flex;
     margin-top: 15px;
     gap: 10px;
+}
+
+.sale-details-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.sale-details-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sale-details-head div {
+    display: flex;
+    gap: 15px;
+}
+
+.sale-details-head a {
+    padding: 8px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.sale-details-head a:hover {
+    background-color: #2980b9;
+}
+
+.sale-details-head a:active {
+    background-color: #1c658c;
 }
 
 @media (max-width: 768px) {

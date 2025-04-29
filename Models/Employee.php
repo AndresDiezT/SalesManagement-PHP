@@ -29,6 +29,21 @@ class Employee
         return $statement->fetch();
     }
 
+    public function searchEmployees($term)
+    {
+        $term = "%{$term}%";
+        $query = "SELECT id_empleado, nombre_empleado, usuario, correo 
+              FROM empleados
+              WHERE id_empleado LIKE :term OR nombre_empleado LIKE :term OR usuario LIKE :term OR correo LIKE :term";
+
+        $statement = $this->db->prepare($query);
+        $statement->bindParam(':term', $term);
+        $statement->execute();
+
+        return $statement->fetchAll();
+    }
+
+
     public function createEmployee($data)
     {
         $query = "INSERT INTO empleados (nombre_empleado, usuario, correo, empleado_password) 
@@ -53,8 +68,7 @@ class Employee
 
         $employees = $statement->fetchAll();
 
-        if (count($employees) > 1)
-        {
+        if (count($employees) > 1) {
             return "error_multiple";
         }
 

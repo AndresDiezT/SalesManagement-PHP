@@ -25,8 +25,8 @@ class SaleEmployee
     {
         $query = "SELECT v.nro_factura, v.fecha_venta,
                 v.id_cliente AS venta_id_cliente, v.id_tipo_venta AS venta_id_tipo_venta, v.id_empleado AS venta_id_empleado,
-                c.nombre_cliente, e.nombre_empleado, t.descripcion AS tipo_venta,
-                p.nombre_prod, d.cantidad, p.impuesto, d.valor_prod, d.valor_impuesto, d.valor_total
+                c.nombre_cliente, c.correo_cliente, e.nombre_empleado, t.descripcion AS tipo_venta,
+                p.nombre_prod, d.cantidad, p.impuesto, d.valor_prod, d.valor_impuesto, d.valor_total, d.cod_prod
                 FROM ventas_empleado v
                 JOIN clientes c ON v.id_cliente = c.id_cliente
                 JOIN empleados e ON v.id_empleado = e.id_empleado
@@ -40,6 +40,56 @@ class SaleEmployee
         $statement->bindParam(":nro_factura", $nro_invoice);
         $statement->execute();
 
+        return $statement->fetchAll();
+    }
+
+    public function searchSales($term)
+    {
+        $term = "%{$term}%";
+        $query = "SELECT
+        ventas_empleado.nro_factura, ventas_empleado.fecha_venta, 
+        clientes.nombre_cliente, empleados.nombre_empleado, 
+        tipos_venta.descripcion
+        FROM ventas_empleado
+        INNER JOIN clientes ON ventas_empleado.id_cliente = clientes.id_cliente
+        INNER JOIN empleados ON ventas_empleado.id_empleado = empleados.id_empleado
+        INNER JOIN tipos_venta ON ventas_empleado.id_tipo_venta = tipos_venta.id_tipo_venta
+        WHERE ventas_empleado.nro_factura LIKE :term
+           OR clientes.nombre_cliente LIKE :term
+           OR empleados.nombre_empleado LIKE :term
+           OR tipos_venta.descripcion LIKE :term";
+
+        $statement = $this->db->prepare($query);
+        $statement->bindParam(':term', $term);
+        $statement->execute();
+
+        return $statement->fetchAll();
+    }
+
+    public function getSaleTotal()
+    {
+        $query = "SELECT SUM(valor_total) AS total_ventas FROM detalles_factura";
+
+        $statement = $this->db->prepare($query);
+        $statement->execute();
+
+        $result = $statement->fetch();
+
+        return $result['total_ventas'] ?? 0;
+    }
+
+    public function getLatestSales()
+    {
+        $query = "SELECT
+                ventas_empleado.nro_factura, ventas_empleado.fecha_venta, clientes.nombre_cliente, empleados.nombre_empleado, tipos_venta.descripcion
+              FROM ventas_empleado
+              INNER JOIN clientes ON ventas_empleado.id_cliente = clientes.id_cliente
+              INNER JOIN empleados ON ventas_empleado.id_empleado = empleados.id_empleado
+              INNER JOIN tipos_venta ON ventas_empleado.id_tipo_venta = tipos_venta.id_tipo_venta
+              ORDER BY ventas_empleado.fecha_venta DESC LIMIT 5";
+
+        $statement = $this->db->prepare($query);
+        $statement->execute();
         return $statement->fetchAll();
     }
 

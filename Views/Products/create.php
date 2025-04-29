@@ -66,8 +66,8 @@ unset($_SESSION["errors"], $_SESSION["old_data"]);
 
             <div class="input-field">
                 <label for="impuesto">Impuesto</label>
-                <input type="number" id="impuesto" name="impuesto" min="0" step="0.01" value="<?= $old['impuesto'] ?? '' ?>"
-                    required>
+                <input type="number" id="impuesto" name="impuesto" min="0" step="0.01"
+                    value="<?= $old['impuesto'] ?? '' ?>" required>
                 <?php if (isset($errors["impuesto"])): ?>
                     <p class="error"><?= $errors["impuesto"] ?></p>
                 <?php endif; ?>

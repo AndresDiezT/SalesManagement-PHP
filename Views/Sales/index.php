@@ -19,9 +19,16 @@
         </nav>
         <h2>Gestión de Ventas</h2>
         <div class="actions">
-            <input type="search" id="search-input" class="search-input" placeholder="Buscar por codigo, nombre...">
+            <form method="GET" action="index.php" class="form-search">
+                <input type="hidden" name="route" value="sales">
+                <input type="search" name="search" class="search-input"
+                    placeholder="Buscar por factura, cliente, empleado..."
+                    value="<?= isset($_GET['search']) ? $_GET['search'] : '' ?>">
+                <button type="submit" class="search-button">Buscar</button>
+            </form>
             <div>
                 <a href="index.php?route=sales/create" class="create-button">Agregar Nueva Venta</a>
+                <a href="index.php?route=sales/export" class="edit-button">Exportar</a>
                 <a href="index.php?route=sales/settings" class="config-button">Configuración</a>
             </div>
         </div>

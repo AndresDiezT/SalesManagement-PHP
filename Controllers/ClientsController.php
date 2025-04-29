@@ -15,7 +15,13 @@ class ClientsController
 
     public function index()
     {
-        $clients = $this->client->getAllClients();
+        $search = isset($_GET['search']) ? trim($_GET['search']) : null;
+
+        if ($search) {
+            $clients = $this->client->searchClients($search);
+        } else {
+            $clients = $this->client->getAllClients();
+        }
 
         include __DIR__ . '/../Views/Clients/index.php';
     }
@@ -28,8 +34,7 @@ class ClientsController
 
         $client = $this->client->getOneClient($id_client);
 
-        if (empty($client))
-        {
+        if (empty($client)) {
             $_SESSION["error_message"] = "Cliente no encontrado";
             header("Location: index.php?route=clients");
             exit;
@@ -49,12 +54,14 @@ class ClientsController
                 "identidad" => isset($_POST["identidad"]) ? trim($_POST["identidad"]) : "",
                 "nombre" => isset($_POST["nombre"]) ? trim($_POST["nombre"]) : "",
                 "direccion" => isset($_POST["direccion"]) ? trim($_POST["direccion"]) : "",
+                "correo" => isset($_POST["correo"]) ? trim($_POST["correo"]) : "",
             ];
 
             $rules = [
-                "identidad" => ["required", "numeric", "max:10", "unique:clientes, nro_identidad"],
+                "identidad" => ["required", "numeric", "max:10"],
                 "nombre" => ["required", "text", "min:6", "max:50"],
-                "direccion" => ["required", "min:10"]
+                "direccion" => ["required", "min:10"],
+                "correo" => ["required", "email"],
             ];
 
             $errors = ValidationHelper::validate($data, $rules, $this->conn);
@@ -102,12 +109,14 @@ class ClientsController
                 "identidad" => isset($_POST["identidad"]) ? trim($_POST["identidad"]) : "",
                 "nombre" => isset($_POST["nombre"]) ? trim($_POST["nombre"]) : "",
                 "direccion" => isset($_POST["direccion"]) ? trim($_POST["direccion"]) : "",
+                "correo" => isset($_POST["correo"]) ? trim($_POST["correo"]) : ""
             ];
 
             $rules = [
-                "identidad" => ["required", "numeric", "max:10", "unique:clientes, nro_identidad, id_cliente, $id_client"],
+                "identidad" => ["required", "numeric", "max:10"],
                 "nombre" => ["required", "text", "min:6", "max:50"],
-                "direccion" => ["required", "min:10"]
+                "direccion" => ["required", "min:10"],
+                "correo" => ["required", "email"]
             ];
 
             $errors = ValidationHelper::validate($data, $rules, $this->conn);
@@ -159,6 +168,31 @@ class ClientsController
 
         header("Location: index.php?route=clients");
         exit;
+    }
+
+    public function exportClients()
+    {
+        $clientes = $this->client->getAllClients();
+
+        header("Content-Type: text/csv; charset=ISO-8859-1");
+        header("Content-Disposition: attachment; filename=clientes.csv");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        $output = fopen("php://output", "w");
+
+        fputcsv($output, ["ID", "Nro Identidad", "Nombre", "Direccion"], ';');
+
+        foreach ($clientes as $cliente) {
+            fputcsv($output, [
+                mb_convert_encoding($cliente['id_cliente'], 'ISO-8859-1', 'UTF-8'),
+                mb_convert_encoding($cliente['nro_identidad'], 'ISO-8859-1', 'UTF-8'),
+                mb_convert_encoding($cliente['nombre_cliente'], 'ISO-8859-1', 'UTF-8'),
+                mb_convert_encoding($cliente['direccion_cliente'], 'ISO-8859-1', 'UTF-8')
+            ], ';');
+        }
+
+        fclose($output);
     }
 }
 ?>

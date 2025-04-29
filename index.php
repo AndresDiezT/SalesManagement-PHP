@@ -35,6 +35,7 @@ switch ($route) {
                 break;
 
             case "products":
+            case "products/index":
                 $productsController->index();
                 break;
 
@@ -64,6 +65,10 @@ switch ($route) {
                 } else {
                     echo "Codigo no proporcionado";
                 }
+                break;
+
+            case "products/export":
+                $productsController->exportProducts();
                 break;
 
             case "products/settings":
@@ -103,6 +108,7 @@ switch ($route) {
                 break;
 
             case "clients":
+            case "clients/index":
                 $clientsController->index();
                 break;
 
@@ -134,7 +140,12 @@ switch ($route) {
                 }
                 break;
 
+            case "clients/export":
+                $clientsController->exportClients();
+                break;
+
             case "employees":
+            case "employees/index":
                 $employeesController->index();
                 break;
 
@@ -166,8 +177,12 @@ switch ($route) {
                 }
                 break;
 
+            case "employees/export":
+                $employeesController->exportEmployees();
+                break;
 
             case "sales":
+            case "sales/index":
                 $salesController->index();
                 break;
 
@@ -196,6 +211,25 @@ switch ($route) {
                     $salesController->delete($_GET['nro_invoice']);
                 } else {
                     echo "Numero de factura no proporcionado";
+                }
+                break;
+
+            case "sales/export":
+                $salesController->exportSales();
+                break;
+
+            case "sales/generate-pdf":
+                if (isset($_GET['nro_invoice'])) {
+                    $salesController->generatePdf($_GET['nro_invoice']);
+                }
+                break;
+
+            case "sales/send-invoice":
+                if (isset($_GET["nro_invoice"])) {
+                    $nro_invoice = $_GET["nro_invoice"];
+                    $salesController->sendInvoiceByEmail($nro_invoice);
+                } else {
+                    echo "Faltan parametros necesarios";
                 }
                 break;
 

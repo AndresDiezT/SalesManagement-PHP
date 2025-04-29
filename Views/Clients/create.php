@@ -42,6 +42,13 @@ unset($_SESSION["errors"], $_SESSION["old_data"]);
                 <?php endif; ?>
             </div>
             <div class="input-field">
+                <label for="correo">Correo</label>
+                <input type="email" id="correo" name="correo" value="<?= $old['correo'] ?? '' ?>" required>
+                <?php if (isset($errors["correo"])): ?>
+                    <p class="error"><?= $errors["correo"] ?></p>
+                <?php endif; ?>
+            </div>
+            <div class="input-field">
                 <label for="direccion">Direccion</label>
                 <input type="text" id="direccion" name="direccion" value="<?= $old['direccion'] ?? '' ?>" required>
                 <?php if (isset($errors["direccion"])): ?>

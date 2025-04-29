@@ -33,7 +33,7 @@ class Product
             productos.valor_unidad, categorias.id_categoria, categorias.nombre_categoria, estados.id_estado, estados.nombre_estado
             FROM `productos` INNER JOIN categorias ON productos.id_categoria = categorias.id_categoria
             INNER JOIN estados ON productos.id_estado = estados.id_estado WHERE cod_prod = :cod_prod";
-    
+
         $statement = $this->db->prepare($query);
 
         $statement->bindValue(":cod_prod", $cod_prod);
@@ -41,6 +41,26 @@ class Product
         $statement->execute();
 
         return $statement->fetch();
+    }
+
+    public function searchProducts($term)
+    {
+        $term = "%{$term}%";
+
+        $query = "SELECT
+                productos.cod_prod, productos.nombre_prod, productos.descripcion_prod, productos.stock_prod, 
+                productos.impuesto, productos.valor_unidad, categorias.nombre_categoria, estados.nombre_estado
+                FROM productos
+                INNER JOIN categorias ON productos.id_categoria = categorias.id_categoria
+                INNER JOIN estados ON productos.id_estado = estados.id_estado
+                WHERE productos.cod_prod LIKE :term 
+                 OR productos.nombre_prod LIKE :term";
+
+        $statement = $this->db->prepare($query);
+        $statement->bindParam(':term', $term);
+        $statement->execute();
+
+        return $statement->fetchAll();
     }
 
     public function createProduct($data)

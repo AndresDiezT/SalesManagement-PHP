@@ -17,7 +17,13 @@ class EmployeesController
 
     public function index()
     {
-        $employees = $this->employee->getAllEmployees();
+        $search = isset($_GET['search']) ? trim($_GET['search']) : null;
+
+        if ($search) {
+            $employees = $this->employee->searchEmployees($search);
+        } else {
+            $employees = $this->employee->getAllEmployees();
+        }
 
         include __DIR__ . '/../Views/Employees/index.php';
     }
@@ -30,8 +36,7 @@ class EmployeesController
 
         $employee = $this->employee->getOneEmployee($id);
 
-        if (empty($employee))
-        {
+        if (empty($employee)) {
             $_SESSION["error_message"] = "Empleado no encontrado";
             header("Location: index.php?route=employees");
             exit;
@@ -61,8 +66,8 @@ class EmployeesController
 
             $rules = [
                 "nombre" => ["required", "text", "min:6"],
-                "usuario" => ["required", "min:3", "unique:empleados,usuario"],
-                "correo" => ["required", "email", "unique:empleados,correo"],
+                "usuario" => ["required", "min:3"],
+                "correo" => ["required", "email"],
                 "empleado_password" => ["required", "min:6"],
                 "confirmar_contraseña" => ["required", "match:empleado_password"]
             ];
@@ -115,14 +120,13 @@ class EmployeesController
                 "id_empleado" => $id_employee,
                 "nombre" => $_POST["nombre"],
                 "usuario" => $_POST["usuario"],
-                "correo" => $_POST["correo"],
-                // "empleado_password" => $_POST["empleado_password"],
+                "correo" => $_POST["correo"]
             ];
 
             $rules = [
                 "nombre" => ["required", "text", "min:6"],
-                "usuario" => ["required", "min:3", "unique:empleados, usuario, id_empleado, $id_employee"],
-                "correo" => ["required", "email", "unique:empleados, correo, id_empleado, $id_employee"],
+                "usuario" => ["required", "min:3"],
+                "correo" => ["required", "email"],
             ];
 
             $errors = ValidationHelper::validate($data, $rules, $this->conn);
@@ -219,6 +223,31 @@ class EmployeesController
         setcookie("id_empleado", "", time() - 3600, "/");
         header("Location: index.php?route=login");
         exit;
+    }
+
+    public function exportEmployees()
+    {
+        $empleados = $this->employee->getAllEmployees();
+
+        header("Content-Type: text/csv; charset=ISO-8859-1");
+        header("Content-Disposition: attachment; filename=empleados.csv");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        $output = fopen("php://output", "w");
+
+        fputcsv($output, ["ID", "Nombre", "Usuario", "Correo"], ';');
+
+        foreach ($empleados as $emp) {
+            fputcsv($output, [
+                mb_convert_encoding($emp['id_empleado'], 'ISO-8859-1', 'UTF-8'),
+                mb_convert_encoding($emp['nombre_empleado'], 'ISO-8859-1', 'UTF-8'),
+                mb_convert_encoding($emp['usuario'], 'ISO-8859-1', 'UTF-8'),
+                mb_convert_encoding($emp['correo'], 'ISO-8859-1', 'UTF-8')
+            ], ';');
+        }
+
+        fclose($output);
     }
 }
 ?>
