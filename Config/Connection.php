@@ -1,10 +1,16 @@
 <?php
     class Connection
     {
-        private $host = "gestorventas.infinityfreeapp.com";
-        private $user = "if0_38839698";
-        private $password = "57LJFEPSIPp";
-        private $db = "if0_38839698_2873797_adso";
+        // private $host = "gestorventas.infinityfreeapp.com";
+        // private $user = "if0_38839698";
+        // private $password = "57LJFEPSIPp";
+        // private $db = "if0_38839698_2873797_adso";
+        // private $connection;
+
+        private $host = "localhost";
+        private $user = "root";
+        private $password = "password123";
+        private $db = "2873797_adso";
         private $connection;
 
         public function __construct()

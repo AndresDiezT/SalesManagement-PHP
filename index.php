@@ -9,6 +9,10 @@ require_once __DIR__ . "/Controllers/SettingsSalesController.php";
 
 require_once __DIR__ . "/Helpers/AuthMiddleware.php";
 
+require_once __DIR__ . "/Config/setup.php";
+
+ensureAdminUser();
+
 $homeController = new HomeController();
 $productsController = new ProductsController();
 $settingsProductsController = new settingsProductsController();
