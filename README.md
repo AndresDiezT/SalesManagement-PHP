@@ -14,7 +14,7 @@ bash
 git clone https://github.com/tuusuario/gestor-ventas.git
 Importa la base de datos:
 
-en la raíz de la carpeta esta el archivo 2873797_adso.sql.
+en la raíz de la carpeta esta el archivo sales.sql.
 
 Importa ese archivo en tu servidor MySQL usando phpMyAdmin o consola.
 
